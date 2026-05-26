@@ -3,67 +3,40 @@ import Timer from './components/Timer'
 import Controls from './components/Controls'
 import Settings from './components/Settings'
 import History from './components/History'
+import usePomodoro from './hooks/usePomodoro'
 
 /**
  * App — Root layout for the Pomodoro Timer
  *
  * Single-screen layout with:
- *  1. Header branding
+ *  1. Header branding + mode toggle
  *  2. Timer display with progress ring
  *  3. Control buttons
  *  4. Collapsible settings
- *  5. Daily session history
+ *  5. Daily session history (persisted via localStorage)
  *
- * Currently uses static/demo state for UI scaffolding.
- * Timer logic will be implemented in Step 2.
+ * All timer logic is driven by the usePomodoro hook.
  */
 export default function App() {
-  // ----- UI State (demo defaults) -----
-  const [isFocusMode, setIsFocusMode] = useState(true)
-  const [isRunning, setIsRunning] = useState(false)
-  const [isPaused, setIsPaused] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
-  const [focusDuration, setFocusDuration] = useState(25)
-  const [breakDuration, setBreakDuration] = useState(5)
 
-  // Demo time display and progress
-  const timeDisplay = isFocusMode
-    ? `${String(focusDuration).padStart(2, '0')}:00`
-    : `${String(breakDuration).padStart(2, '0')}:00`
-  const progress = isRunning ? 0.65 : isPaused ? 0.4 : 1
-
-  // Demo session history
-  const demoSessions = [
-    { duration: '25:00', completedAt: '2:15 PM' },
-    { duration: '25:00', completedAt: '3:42 PM' },
-    { duration: '25:00', completedAt: '4:30 PM' },
-  ]
-
-  // ----- Handlers (stubs for UI) -----
-  const handleStart = () => {
-    setIsRunning(true)
-    setIsPaused(false)
-  }
-
-  const handlePause = () => {
-    setIsRunning(false)
-    setIsPaused(true)
-  }
-
-  const handleResume = () => {
-    setIsRunning(true)
-    setIsPaused(false)
-  }
-
-  const handleReset = () => {
-    setIsRunning(false)
-    setIsPaused(false)
-  }
-
-  const handleModeToggle = () => {
-    setIsFocusMode((prev) => !prev)
-    handleReset()
-  }
+  const {
+    isFocusMode,
+    isRunning,
+    isPaused,
+    timeDisplay,
+    progress,
+    focusDuration,
+    breakDuration,
+    sessions,
+    start,
+    pause,
+    resume,
+    reset,
+    toggleMode,
+    updateFocusDuration,
+    updateBreakDuration,
+  } = usePomodoro(25, 5)
 
   return (
     <div className="relative min-h-screen flex flex-col">
@@ -105,14 +78,16 @@ export default function App() {
 
           {/* Mode toggle chip */}
           <button
-            onClick={handleModeToggle}
-            className="
+            onClick={toggleMode}
+            disabled={isRunning}
+            className={`
               flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium
               bg-[var(--color-bg-card)] border border-[var(--color-border)]
               text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]
               hover:border-[var(--color-border-hover)]
               transition-all duration-200 cursor-pointer
-            "
+              ${isRunning ? 'opacity-50 cursor-not-allowed' : ''}
+            `}
             aria-label={`Switch to ${isFocusMode ? 'break' : 'focus'} mode`}
             id="btn-mode-toggle"
           >
@@ -140,17 +115,17 @@ export default function App() {
             isRunning={isRunning}
             isPaused={isPaused}
             isFocusMode={isFocusMode}
-            onStart={handleStart}
-            onPause={handlePause}
-            onResume={handleResume}
-            onReset={handleReset}
+            onStart={start}
+            onPause={pause}
+            onResume={resume}
+            onReset={reset}
           />
 
           <Settings
             focusDuration={focusDuration}
             breakDuration={breakDuration}
-            onFocusChange={setFocusDuration}
-            onBreakChange={setBreakDuration}
+            onFocusChange={updateFocusDuration}
+            onBreakChange={updateBreakDuration}
             isOpen={settingsOpen}
             onToggle={() => setSettingsOpen((v) => !v)}
           />
@@ -158,7 +133,7 @@ export default function App() {
 
         {/* --- History Section --- */}
         <section className="pb-8 sm:pb-12" aria-label="Session history">
-          <History sessions={demoSessions} />
+          <History sessions={sessions} />
         </section>
 
         {/* --- Footer --- */}

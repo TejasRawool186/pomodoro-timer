@@ -1,0 +1,253 @@
+Software Requirements Specification (SRS)
+Pomodoro Timer with Daily History
+1. Project Overview
+Project Title
+
+Pomodoro Timer Web Application
+
+Objective
+
+Develop a modern, responsive Pomodoro Timer web application that allows users to manage focus and break sessions efficiently while tracking completed focus sessions for the current day.
+
+The application should provide:
+
+Smooth timer interactions
+Visual state feedback
+Daily session tracking
+Persistent local storage
+Responsive UI
+Accessibility support
+2. Functional Requirements
+2.1 Timer Features
+
+The application shall allow users to:
+
+Start the timer
+Pause the timer
+Resume the timer
+Reset the timer
+Automatically switch between:
+Focus session
+Break session
+Display countdown in:
+mm:ss format
+Configure:
+Focus duration
+Break duration
+Play audible notification when session ends
+2.2 Session History
+
+The application shall:
+
+Store completed focus sessions
+Display:
+Session duration
+Completion time
+Persist data after page refresh
+Automatically clear history on a new calendar day
+
+Example:
+
+✓ 25:00 Focus — 3:42 PM
+2.3 Responsive Design
+
+The application shall:
+
+Work properly on:
+Mobile devices (360px width)
+Tablets
+Desktop screens (1440px width)
+Adjust layouts dynamically
+Maintain readable typography
+2.4 Accessibility
+
+The application shall include:
+
+Keyboard navigation
+Focus states
+ARIA labels
+Sufficient color contrast
+3. Non-Functional Requirements
+Performance
+Timer updates every second smoothly
+No noticeable lag during transitions
+Usability
+Clean and intuitive interface
+Clear visual distinction between:
+Focus mode
+Break mode
+Paused state
+Reliability
+Accurate countdown handling
+Persistent session history using LocalStorage
+4. Technology Stack
+Technology	Purpose
+React + Vite	Frontend Framework
+Tailwind CSS	Styling
+LocalStorage	Data persistence
+JavaScript	Timer logic
+Vercel	Deployment
+5. UI Components
+Main Components
+Timer Display
+Large countdown display
+Circular progress indicator
+Controls
+Start
+Pause
+Resume
+Reset
+Settings
+Focus duration input
+Break duration input
+History Section
+List of completed sessions
+6. Local Storage Structure
+{
+  "date": "2026-05-26",
+  "sessions": [
+    {
+      "duration": "25:00",
+      "completedAt": "3:42 PM"
+    }
+  ]
+}
+7. Project Folder Structure
+src/
+├── components/
+│   ├── Timer.jsx
+│   ├── Controls.jsx
+│   ├── Settings.jsx
+│   ├── History.jsx
+│   └── ProgressRing.jsx
+│
+├── hooks/
+│   └── usePomodoro.js
+│
+├── utils/
+│   ├── storage.js
+│   └── date.js
+│
+├── App.jsx
+└── main.jsx
+8. Development Plan in 5 Steps
+
+This is VERY IMPORTANT because your commit history should reflect actual progress.
+
+STEP 1 — Project Setup & Base UI
+Goal
+
+Setup project and create initial interface.
+
+Tasks
+Create React + Vite app
+Install Tailwind CSS
+Build:
+Layout
+Timer UI
+Buttons
+Settings section
+History section
+Add responsive structure
+Commit Message
+Initial React setup and base UI layout
+STEP 2 — Timer Functionality
+Goal
+
+Implement complete Pomodoro timer logic.
+
+Tasks
+Start timer
+Pause timer
+Resume timer
+Reset timer
+Countdown logic
+Auto switch:
+Focus → Break
+Break → Focus
+mm:ss formatting
+Commit Message
+Implement pomodoro countdown and session transitions
+STEP 3 — Daily History & Persistence
+Goal
+
+Add LocalStorage and history tracking.
+
+Tasks
+Save completed focus sessions
+Store timestamps
+Display history
+Persist after reload
+Reset history on new day
+Commit Message
+Add daily session history with localStorage persistence
+STEP 4 — UX Enhancements & Accessibility
+Goal
+
+Improve feel and usability.
+
+Tasks
+Add circular progress animation
+Add session completion sound
+Add visual mode states
+Keyboard shortcuts
+Focus states
+ARIA labels
+Improve mobile responsiveness
+Commit Message
+Enhance UX with animations accessibility and responsive design
+STEP 5 — Final Polish & Documentation
+Goal
+
+Prepare final submission professionally.
+
+Tasks
+Bug fixing
+UI polishing
+Optimize spacing and typography
+Create README.md
+Create ANSWERS.md
+Deploy to Vercel
+Final testing
+Commit Message
+Finalize documentation deployment and UI polish
+9. README Requirements
+
+Your README.md should contain:
+
+Project overview
+Features
+Installation steps
+Run commands
+Tech stack
+Deployment link
+10. ANSWERS.md Requirements
+
+Must answer all 5 provided questions:
+
+How to run
+Stack & design choices
+Responsive & accessibility
+AI usage
+Honest gap
+11. Final Submission Checklist
+Before Submitting
+Code
+ Timer works correctly
+ Auto transitions work
+ History persists
+ Responsive on mobile
+ Sound notification works
+Repository
+ Multiple commits
+ Clean folder structure
+ README.md added
+ ANSWERS.md added
+Deployment
+ App deployed on Vercel
+ Deployment link tested
+UX
+ Clear visual states
+ Smooth interactions
+ Good typography
+ Accessible controls

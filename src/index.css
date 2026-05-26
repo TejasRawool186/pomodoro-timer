@@ -1,0 +1,168 @@
+@import "tailwindcss";
+
+/* ========================================
+   FOCUSLY — Design Tokens & Theme
+   ======================================== */
+
+@theme {
+  /* Color palette */
+  --color-bg-primary: #0a0a12;
+  --color-bg-secondary: #12121e;
+  --color-bg-card: #1a1a2e;
+  --color-bg-elevated: #222240;
+
+  --color-focus: #f97066;
+  --color-focus-glow: #f9706640;
+  --color-focus-soft: #f9706620;
+  --color-focus-ring: #f9706650;
+
+  --color-break: #34d399;
+  --color-break-glow: #34d39940;
+  --color-break-soft: #34d39920;
+  --color-break-ring: #34d39950;
+
+  --color-text-primary: #f0f0f5;
+  --color-text-secondary: #9191b0;
+  --color-text-muted: #5c5c80;
+
+  --color-border: #2a2a45;
+  --color-border-hover: #3a3a5a;
+
+  /* Font families */
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Animations */
+  --animate-pulse-glow: pulse-glow 2s ease-in-out infinite;
+  --animate-fade-in: fade-in 0.5s ease-out;
+  --animate-slide-up: slide-up 0.5s ease-out;
+  --animate-scale-in: scale-in 0.3s ease-out;
+}
+
+/* ========================================
+   Keyframe Animations
+   ======================================== */
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ========================================
+   Base Styles
+   ======================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border-hover);
+}
+
+/* Focus-visible ring for accessibility */
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ========================================
+   Progress Ring Animation
+   ======================================== */
+
+.progress-ring-circle {
+  transition: stroke-dashoffset 1s linear, stroke 0.5s ease;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+/* ========================================
+   Glassmorphism Card
+   ======================================== */
+
+.glass-card {
+  background: linear-gradient(
+    135deg,
+    rgba(26, 26, 46, 0.8),
+    rgba(34, 34, 64, 0.4)
+  );
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--color-border);
+}
+
+/* ========================================
+   Button base
+   ======================================== */
+
+.btn-base {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.btn-base::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.btn-base:hover::after {
+  opacity: 1;
+}

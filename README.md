@@ -101,7 +101,7 @@ npm run preview
 
 The app is deployed on Vercel:
 
-🔗 **Live Demo**: [https://pomodoro-timer-tejasrawool186.vercel.app](https://pomodoro-timer-tejasrawool186.vercel.app)
+🔗 **Live Demo**: [https://pomodoro-timer-lilac-zeta.vercel.app](https://pomodoro-timer-lilac-zeta.vercel.app)
 
 ## 📝 License
 

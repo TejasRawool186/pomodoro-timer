@@ -3,6 +3,7 @@
  *
  * Collapsible settings panel where users can adjust
  * the duration for focus and break sessions.
+ * Stepper buttons are disabled while timer is running/paused.
  *
  * @param {number} focusDuration — focus time in minutes
  * @param {number} breakDuration — break time in minutes
@@ -10,6 +11,7 @@
  * @param {function} onBreakChange — called with new break duration
  * @param {boolean} isOpen — whether the settings panel is expanded
  * @param {function} onToggle — called to toggle settings visibility
+ * @param {boolean} isDisabled — disables inputs when timer is running/paused
  */
 export default function Settings({
   focusDuration = 25,
@@ -18,7 +20,10 @@ export default function Settings({
   onBreakChange = () => {},
   isOpen = false,
   onToggle = () => {},
+  isDisabled = false,
 }) {
+  const disabledClass = isDisabled ? 'opacity-50 cursor-not-allowed' : ''
+
   return (
     <div className="w-full max-w-md mx-auto animate-[slide-up_0.5s_ease-out]">
       {/* Toggle button */}
@@ -50,8 +55,15 @@ export default function Settings({
         aria-label="Timer settings"
       >
         <div className="glass-card rounded-2xl p-5 space-y-4">
+          {/* Disabled notice */}
+          {isDisabled && (
+            <p className="text-xs text-[var(--color-paused)] text-center pb-1" role="alert">
+              Reset the timer to change durations
+            </p>
+          )}
+
           {/* Focus duration */}
-          <div className="flex items-center justify-between gap-4">
+          <fieldset className={`flex items-center justify-between gap-4 ${disabledClass}`} disabled={isDisabled}>
             <label
               htmlFor="focus-duration"
               className="flex items-center gap-2 text-sm font-medium text-[var(--color-text-secondary)]"
@@ -71,8 +83,10 @@ export default function Settings({
                   text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]
                   hover:border-[var(--color-border-hover)]
                   transition-all duration-200 text-lg cursor-pointer
+                  disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:text-[var(--color-text-secondary)]
                 "
-                aria-label="Decrease focus duration"
+                aria-label="Decrease focus duration by 5 minutes"
+                disabled={isDisabled}
               >
                 −
               </button>
@@ -83,12 +97,14 @@ export default function Settings({
                 max="120"
                 value={focusDuration}
                 onChange={(e) => onFocusChange(Number(e.target.value))}
+                disabled={isDisabled}
                 className="
                   w-16 h-8 text-center rounded-lg font-mono text-sm font-semibold
                   bg-[var(--color-bg-primary)] border border-[var(--color-border)]
                   text-[var(--color-text-primary)]
                   focus:border-[var(--color-focus)] focus:outline-none
                   transition-colors duration-200
+                  disabled:opacity-50 disabled:cursor-not-allowed
                   [appearance:textfield]
                   [&::-webkit-outer-spin-button]:appearance-none
                   [&::-webkit-inner-spin-button]:appearance-none
@@ -103,17 +119,19 @@ export default function Settings({
                   text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]
                   hover:border-[var(--color-border-hover)]
                   transition-all duration-200 text-lg cursor-pointer
+                  disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:text-[var(--color-text-secondary)]
                 "
-                aria-label="Increase focus duration"
+                aria-label="Increase focus duration by 5 minutes"
+                disabled={isDisabled}
               >
                 +
               </button>
               <span className="text-xs text-[var(--color-text-muted)] w-8">min</span>
             </div>
-          </div>
+          </fieldset>
 
           {/* Break duration */}
-          <div className="flex items-center justify-between gap-4">
+          <fieldset className={`flex items-center justify-between gap-4 ${disabledClass}`} disabled={isDisabled}>
             <label
               htmlFor="break-duration"
               className="flex items-center gap-2 text-sm font-medium text-[var(--color-text-secondary)]"
@@ -133,8 +151,10 @@ export default function Settings({
                   text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]
                   hover:border-[var(--color-border-hover)]
                   transition-all duration-200 text-lg cursor-pointer
+                  disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:text-[var(--color-text-secondary)]
                 "
-                aria-label="Decrease break duration"
+                aria-label="Decrease break duration by 1 minute"
+                disabled={isDisabled}
               >
                 −
               </button>
@@ -145,12 +165,14 @@ export default function Settings({
                 max="60"
                 value={breakDuration}
                 onChange={(e) => onBreakChange(Number(e.target.value))}
+                disabled={isDisabled}
                 className="
                   w-16 h-8 text-center rounded-lg font-mono text-sm font-semibold
                   bg-[var(--color-bg-primary)] border border-[var(--color-border)]
                   text-[var(--color-text-primary)]
                   focus:border-[var(--color-break)] focus:outline-none
                   transition-colors duration-200
+                  disabled:opacity-50 disabled:cursor-not-allowed
                   [appearance:textfield]
                   [&::-webkit-outer-spin-button]:appearance-none
                   [&::-webkit-inner-spin-button]:appearance-none
@@ -165,14 +187,16 @@ export default function Settings({
                   text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]
                   hover:border-[var(--color-border-hover)]
                   transition-all duration-200 text-lg cursor-pointer
+                  disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:text-[var(--color-text-secondary)]
                 "
-                aria-label="Increase break duration"
+                aria-label="Increase break duration by 1 minute"
+                disabled={isDisabled}
               >
                 +
               </button>
               <span className="text-xs text-[var(--color-text-muted)] w-8">min</span>
             </div>
-          </div>
+          </fieldset>
         </div>
       </div>
     </div>

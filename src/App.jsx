@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Timer from './components/Timer'
 import Controls from './components/Controls'
 import Settings from './components/Settings'
@@ -9,11 +9,16 @@ import usePomodoro from './hooks/usePomodoro'
  * App — Root layout for the Pomodoro Timer
  *
  * Single-screen layout with:
- *  1. Header branding + mode toggle
- *  2. Timer display with progress ring
- *  3. Control buttons
- *  4. Collapsible settings
- *  5. Daily session history (persisted via localStorage)
+ *  1. Skip-to-content link (accessibility)
+ *  2. Header branding + mode toggle
+ *  3. Timer display with progress ring + paused state
+ *  4. Control buttons with keyboard shortcuts
+ *  5. Collapsible settings (disabled while running/paused)
+ *  6. Daily session history (persisted via localStorage)
+ *
+ * Keyboard shortcuts:
+ *  - Space: Start / Pause / Resume
+ *  - R: Reset (when running or paused)
  *
  * All timer logic is driven by the usePomodoro hook.
  */
@@ -38,17 +43,70 @@ export default function App() {
     updateBreakDuration,
   } = usePomodoro(25, 5)
 
+  // ----- Update document title with timer state -----
+  useEffect(() => {
+    const mode = isFocusMode ? 'Focus' : 'Break'
+    if (isRunning || isPaused) {
+      document.title = `${timeDisplay} — ${mode} | Focusly`
+    } else {
+      document.title = 'Focusly — Pomodoro Timer'
+    }
+  }, [timeDisplay, isFocusMode, isRunning, isPaused])
+
+  // ----- Keyboard shortcuts -----
+  const handleKeyDown = useCallback((e) => {
+    // Don't trigger shortcuts when typing in inputs
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return
+
+    if (e.code === 'Space') {
+      e.preventDefault()
+      if (isRunning) {
+        pause()
+      } else if (isPaused) {
+        resume()
+      } else {
+        start()
+      }
+    }
+
+    if (e.code === 'KeyR' && !e.ctrlKey && !e.metaKey) {
+      if (isRunning || isPaused) {
+        e.preventDefault()
+        reset()
+      }
+    }
+  }, [isRunning, isPaused, start, pause, resume, reset])
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [handleKeyDown])
+
+  // Settings should be disabled while the timer is active
+  const isTimerActive = isRunning || isPaused
+
   return (
     <div className="relative min-h-screen flex flex-col">
+      {/* Skip to main content — accessibility */}
+      <a
+        href="#timer-main"
+        className="sr-only"
+      >
+        Skip to timer
+      </a>
+
       {/* ===== Background Effects ===== */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-        {/* Radial gradient glow */}
+        {/* Radial gradient glow — color shifts with mode and paused state */}
         <div
-          className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full opacity-20 blur-3xl transition-all duration-1000"
+          className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full blur-3xl transition-all duration-1000"
           style={{
-            background: isFocusMode
-              ? 'radial-gradient(circle, var(--color-focus) 0%, transparent 70%)'
-              : 'radial-gradient(circle, var(--color-break) 0%, transparent 70%)',
+            background: isPaused
+              ? 'radial-gradient(circle, var(--color-paused) 0%, transparent 70%)'
+              : isFocusMode
+                ? 'radial-gradient(circle, var(--color-focus) 0%, transparent 70%)'
+                : 'radial-gradient(circle, var(--color-break) 0%, transparent 70%)',
+            opacity: isPaused ? 0.12 : 0.2,
           }}
         />
         {/* Subtle grid pattern */}
@@ -79,14 +137,14 @@ export default function App() {
           {/* Mode toggle chip */}
           <button
             onClick={toggleMode}
-            disabled={isRunning}
+            disabled={isTimerActive}
             className={`
               flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium
               bg-[var(--color-bg-card)] border border-[var(--color-border)]
               text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]
               hover:border-[var(--color-border-hover)]
               transition-all duration-200 cursor-pointer
-              ${isRunning ? 'opacity-50 cursor-not-allowed' : ''}
+              ${isTimerActive ? 'opacity-50 cursor-not-allowed' : ''}
             `}
             aria-label={`Switch to ${isFocusMode ? 'break' : 'focus'} mode`}
             id="btn-mode-toggle"
@@ -103,12 +161,17 @@ export default function App() {
         </header>
 
         {/* --- Timer Section --- */}
-        <main className="flex-1 flex flex-col items-center justify-center gap-8 py-4 sm:py-8">
+        <main
+          id="timer-main"
+          className="flex-1 flex flex-col items-center justify-center gap-8 py-4 sm:py-8"
+          role="main"
+        >
           <Timer
             timeDisplay={timeDisplay}
             isFocusMode={isFocusMode}
             progress={progress}
             isRunning={isRunning}
+            isPaused={isPaused}
           />
 
           <Controls
@@ -128,6 +191,7 @@ export default function App() {
             onBreakChange={updateBreakDuration}
             isOpen={settingsOpen}
             onToggle={() => setSettingsOpen((v) => !v)}
+            isDisabled={isTimerActive}
           />
         </main>
 

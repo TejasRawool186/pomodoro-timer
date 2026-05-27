@@ -21,6 +21,11 @@
   --color-break-soft: #34d39920;
   --color-break-ring: #34d39950;
 
+  --color-paused: #f59e0b;
+  --color-paused-glow: #f59e0b40;
+  --color-paused-soft: #f59e0b20;
+  --color-paused-ring: #f59e0b50;
+
   --color-text-primary: #f0f0f5;
   --color-text-secondary: #9191b0;
   --color-text-muted: #5c5c80;
@@ -75,6 +80,27 @@
   }
 }
 
+@keyframes pulse-paused {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+@keyframes ring-glow-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px var(--ring-glow));
+    opacity: 1;
+  }
+  50% {
+    filter: drop-shadow(0 0 16px var(--ring-glow));
+    opacity: 0.7;
+  }
+}
+
+@keyframes badge-bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
 /* ========================================
    Base Styles
    ======================================== */
@@ -113,11 +139,62 @@ body {
   background: var(--color-border-hover);
 }
 
-/* Focus-visible ring for accessibility */
+/* ========================================
+   Accessibility — Focus Visible
+   ======================================== */
+
 :focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+/* Enhanced focus ring for buttons */
+button:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+  border-radius: 16px;
+  box-shadow: 0 0 0 4px var(--color-focus-soft);
+}
+
+/* Enhanced focus ring for inputs */
+input:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+  border-radius: 8px;
+  box-shadow: 0 0 0 3px var(--color-focus-soft);
+}
+
+/* Skip to main content link (screen reader) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.sr-only:focus {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  width: auto;
+  height: auto;
+  padding: 12px 24px;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+  z-index: 9999;
+  background: var(--color-bg-card);
+  color: var(--color-text-primary);
+  border: 2px solid var(--color-focus);
+  border-radius: 12px;
+  font-weight: 600;
 }
 
 /* ========================================
@@ -128,6 +205,10 @@ body {
   transition: stroke-dashoffset 1s linear, stroke 0.5s ease;
   transform: rotate(-90deg);
   transform-origin: 50% 50%;
+}
+
+.progress-ring-circle.paused {
+  animation: ring-glow-pulse 2s ease-in-out infinite;
 }
 
 /* ========================================
@@ -165,4 +246,52 @@ body {
 
 .btn-base:hover::after {
   opacity: 1;
+}
+
+/* ========================================
+   Keyboard shortcut badge
+   ======================================== */
+
+.kbd-hint {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 18px;
+  padding: 0 5px;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--color-text-muted);
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  opacity: 0.7;
+}
+
+/* ========================================
+   Timer paused state
+   ======================================== */
+
+.timer-paused {
+  animation: pulse-paused 1.5s ease-in-out infinite;
+}
+
+/* ========================================
+   Reduced motion preference
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .progress-ring-circle {
+    transition: none;
+  }
 }

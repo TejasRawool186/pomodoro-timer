@@ -1,11 +1,15 @@
 /**
- * Controls — Timer action buttons
+ * Controls — Timer action buttons with keyboard shortcut hints
  *
  * Renders Start/Pause/Resume/Reset buttons with proper
- * visual states and accessibility labels.
+ * visual states, accessibility labels, and keyboard shortcut badges.
+ *
+ * Keyboard shortcuts (handled in App.jsx):
+ *  - Space: Start / Pause / Resume
+ *  - R: Reset
  *
  * @param {boolean} isRunning — whether the timer is currently running
- * @param {boolean} isPaused — whether the timer is paused (was running, now stopped)
+ * @param {boolean} isPaused — whether the timer is paused
  * @param {boolean} isFocusMode — for theming the primary button
  * @param {function} onStart — called when Start is pressed
  * @param {function} onPause — called when Pause is pressed
@@ -31,7 +35,7 @@ export default function Controls({
       role="group"
       aria-label="Timer controls"
     >
-      {/* Main action button */}
+      {/* Main action button — Start */}
       {!isRunning && !isPaused && (
         <button
           onClick={onStart}
@@ -42,14 +46,16 @@ export default function Controls({
             active:scale-95 transition-all duration-200
             cursor-pointer
           `}
-          aria-label="Start timer"
+          aria-label="Start timer (Space)"
           id="btn-start"
         >
           <PlayIcon />
           Start
+          <span className="kbd-hint ml-1 hidden sm:inline-flex" aria-hidden="true">␣</span>
         </button>
       )}
 
+      {/* Main action button — Pause */}
       {isRunning && (
         <button
           onClick={onPause}
@@ -61,14 +67,16 @@ export default function Controls({
             active:scale-95 transition-all duration-200
             cursor-pointer
           `}
-          aria-label="Pause timer"
+          aria-label="Pause timer (Space)"
           id="btn-pause"
         >
           <PauseIcon />
           Pause
+          <span className="kbd-hint ml-1 hidden sm:inline-flex" aria-hidden="true">␣</span>
         </button>
       )}
 
+      {/* Main action button — Resume */}
       {isPaused && !isRunning && (
         <button
           onClick={onResume}
@@ -79,11 +87,12 @@ export default function Controls({
             active:scale-95 transition-all duration-200
             cursor-pointer
           `}
-          aria-label="Resume timer"
+          aria-label="Resume timer (Space)"
           id="btn-resume"
         >
           <PlayIcon />
           Resume
+          <span className="kbd-hint ml-1 hidden sm:inline-flex" aria-hidden="true">␣</span>
         </button>
       )}
 
@@ -99,11 +108,12 @@ export default function Controls({
             active:scale-95 transition-all duration-200
             cursor-pointer
           `}
-          aria-label="Reset timer"
+          aria-label="Reset timer (R)"
           id="btn-reset"
         >
           <ResetIcon />
           Reset
+          <span className="kbd-hint ml-1 hidden sm:inline-flex" aria-hidden="true">R</span>
         </button>
       )}
     </div>

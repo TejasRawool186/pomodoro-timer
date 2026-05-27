@@ -2,7 +2,7 @@
  * History — Daily session history list
  *
  * Displays a list of completed focus sessions for the current day.
- * Shows session duration and completion time.
+ * Shows session duration, completion time, and total focus time.
  *
  * @param {Array} sessions — array of { duration: string, completedAt: string }
  */
@@ -12,6 +12,18 @@ export default function History({ sessions = [] }) {
     month: 'long',
     day: 'numeric',
   })
+
+  // Calculate total focus minutes from sessions
+  const totalMinutes = sessions.reduce((sum, session) => {
+    const parts = session.duration.split(':')
+    return sum + (parseInt(parts[0], 10) || 0)
+  }, 0)
+
+  const totalHours = Math.floor(totalMinutes / 60)
+  const remainingMins = totalMinutes % 60
+  const totalTimeLabel = totalHours > 0
+    ? `${totalHours}h ${remainingMins}m`
+    : `${remainingMins}m`
 
   return (
     <div className="w-full max-w-md mx-auto animate-[slide-up_0.5s_ease-out]">
@@ -76,10 +88,10 @@ export default function History({ sessions = [] }) {
           <div className="px-4 py-3 border-t border-[var(--color-border)] bg-[var(--color-bg-elevated)]/20">
             <div className="flex items-center justify-between">
               <span className="text-xs font-medium text-[var(--color-text-muted)]">
-                Total Sessions
+                {sessions.length} {sessions.length === 1 ? 'session' : 'sessions'} completed
               </span>
               <span className="text-xs font-semibold text-[var(--color-break)] font-mono">
-                {sessions.length}
+                {totalTimeLabel} focused
               </span>
             </div>
           </div>
